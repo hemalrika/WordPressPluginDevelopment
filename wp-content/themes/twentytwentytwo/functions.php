@@ -65,3 +65,14 @@ add_action( 'wp_enqueue_scripts', 'twentytwentytwo_styles' );
 
 // Add block patterns
 require get_template_directory() . '/inc/block-patterns.php';
+
+function twtwo_post_format($formats) {
+	$formats[] = 'page';
+	return $formats;
+}
+add_filter("ptc_excluded_post_format_for_qr_code", "twtwo_post_format");
+function tw_atc_qr_code_dimension($dimension) {
+	$dimension = "500x500";
+	return $dimension;
+}
+// add_filter("atc_qr_code_dimension", "tw_atc_qr_code_dimension");
