@@ -39,13 +39,26 @@ $qr_code_dimension = apply_filters("atc_qr_code_dimension", "{$height}x{$width}"
 }
 add_filter("the_content", "ptc_insert_qr_code_into_content");
 
-
+$pqrc_countries = array(
+    'Bangladesh',
+    'Africa',
+    'Malaysia',
+    'Maldives',
+    'New York',
+    'Netherland',
+    'Australia'
+);
+function pqrc_init() {
+    global $pqrc_countries;
+    $pqrc_countries = apply_filters("pqrc_country_list", $pqrc_countries);
+}
+add_action('init', 'pqrc_init');
 
 function ptc_admin_init() {
     add_settings_section('pqrc_section', __('QR Code Scanner', 'ptc'), 'pqrc_callback', 'general');
 
-    add_settings_field('pqrc_height', __("Height"), 'pqrc_display_height', 'general', 'pqrc_section');
-    add_settings_field('pqrc_width', __("Width"), 'pqrc_display_width', 'general', 'pqrc_section');
+    add_settings_field('pqrc_height', __("Height"), 'pqrc_display_func', 'general', 'pqrc_section', array('pqrc_height'));
+    add_settings_field('pqrc_width', __("Width"), 'pqrc_display_func', 'general', 'pqrc_section', array('pqrc_width'));
 
     register_setting('general', 'pqrc_height', array('sanitize_callback' => 'esc_attr'));
     register_setting('general', 'pqrc_width', array('sanitize_callback' => 'esc_attr'));
@@ -54,11 +67,55 @@ add_action("admin_init", "ptc_admin_init");
 function pqrc_callback() {
     echo '<p>This is a post to qrcode scanner Description</p>';
 }
-function pqrc_display_height() {
-    $height = get_option("pqrc_height");
-    printf("<input type='text' value='%s' name='%s' id='%s' />", $height, 'pqrc_height', 'pqrc_height');
+function pqrc_display_func($args) {
+    $height = get_option($args[0]);
+    printf("<input type='text' value='%s' name='%s' id='%s' />", $height, $args[0], $args[0]);
 }
-function pqrc_display_width() {
-    $width = get_option("pqrc_width");
-    printf("<input type='text' value='%s' name='%s' id='%s' />", $width, 'pqrc_width', 'pqrc_width');
+
+
+/***
+ * Create select into settings panel
+ */
+
+function ptc_create_country_settings() {
+    add_settings_field('pqrc_country', 'Select Country', 'pqrc_country_callback', 'general');
+    register_setting('general', 'pqrc_country', array('senitize_callback'=> 'esc_attr'));
+}
+add_action('admin_init', 'ptc_create_country_settings');
+
+function pqrc_country_callback() {
+    $selected_country = get_option('pqrc_country');
+    global $pqrc_countries;
+    printf("<select id='%s' name='%s'>", 'pqrc_country', 'pqrc_country');
+    foreach($pqrc_countries as $country) {
+        $selected_country_selected = '';
+        if($selected_country == $country) {
+                $selected_country_selected = 'selected';
+            }
+            printf("<option value='%s' %s>%s</option>", $country, $selected_country_selected, $country);
+        }
+    echo '</select>';
+}
+
+
+
+/**
+ * Create multiple select checkbox
+ */
+
+function ptc_multiple_select_checkbox() {
+    add_settings_field('multiple_select_country', 'Select Your Country', 'multiple_select_country_callback', 'general');
+    register_setting( 'general', 'multiple_select_country' );
+}
+add_action('admin_init', 'ptc_multiple_select_checkbox');
+function multiple_select_country_callback() {
+    $options = get_option('multiple_select_country');
+    global $pqrc_countries;
+    foreach($pqrc_countries as $country) {
+        $country_checked = '';
+        if(is_array($options) && in_array($country, $options)) {
+            $country_checked = 'checked';
+        }
+        printf("<input type='checkbox' name='multiple_select_country[]' value='%s' %s /> %s<br/>", $country, $country_checked, $country);
+    }
 }

@@ -76,3 +76,8 @@ function tw_atc_qr_code_dimension($dimension) {
 	return $dimension;
 }
 // add_filter("atc_qr_code_dimension", "tw_atc_qr_code_dimension");
+function change_pqrc_country($countries) {
+	$countries[] = "Dubai";
+	return $countries;
+}
+add_filter('pqrc_country_list', 'change_pqrc_country');
