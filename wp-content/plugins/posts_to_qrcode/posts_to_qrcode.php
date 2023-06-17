@@ -42,13 +42,18 @@ add_filter("the_content", "ptc_insert_qr_code_into_content");
 
 
 function ptc_admin_init() {
-    add_settings_field('pqrc_height', __("Height"), 'pqrc_display_height', 'general');
-    add_settings_field('pqrc_width', __("Width"), 'pqrc_display_width', 'general');
+    add_settings_section('pqrc_section', __('QR Code Scanner', 'ptc'), 'pqrc_callback', 'general');
+
+    add_settings_field('pqrc_height', __("Height"), 'pqrc_display_height', 'general', 'pqrc_section');
+    add_settings_field('pqrc_width', __("Width"), 'pqrc_display_width', 'general', 'pqrc_section');
 
     register_setting('general', 'pqrc_height', array('sanitize_callback' => 'esc_attr'));
     register_setting('general', 'pqrc_width', array('sanitize_callback' => 'esc_attr'));
 }
-
+add_action("admin_init", "ptc_admin_init");
+function pqrc_callback() {
+    echo '<p>This is a post to qrcode scanner Description</p>';
+}
 function pqrc_display_height() {
     $height = get_option("pqrc_height");
     printf("<input type='text' value='%s' name='%s' id='%s' />", $height, 'pqrc_height', 'pqrc_height');
@@ -57,4 +62,3 @@ function pqrc_display_width() {
     $width = get_option("pqrc_width");
     printf("<input type='text' value='%s' name='%s' id='%s' />", $width, 'pqrc_width', 'pqrc_width');
 }
-add_action("admin_init", "ptc_admin_init");
