@@ -119,3 +119,42 @@ function multiple_select_country_callback() {
         printf("<input type='checkbox' name='multiple_select_country[]' value='%s' %s /> %s<br/>", $country, $country_checked, $country);
     }
 }
+
+/**
+ * Add toggle setting field into generel
+ */
+
+
+
+/**
+  * Load essential CSS and js files
+*/
+function pqrc_add_external_assets($screen) {
+    echo $screen;
+    if('options-general.php' == $screen) {
+        wp_enqueue_style('minitoggle-css', plugin_dir_url(__FILE__).'assets/css/minitoggle.css', null, false);
+        wp_enqueue_script('minitoggle-js', plugin_dir_url(__FILE__).'assets/js/minitoggle.js', array('jquery'),'1.0.0', true);
+        wp_enqueue_script('main', plugin_dir_url(__FILE__).'assets/js/main.js', array('jquery'), time(), true);
+    }
+}
+add_action("admin_enqueue_scripts", "pqrc_add_external_assets");
+
+
+
+/**
+ * Add settings field into admin bar
+ */
+function pqrc_switcher_setting_field_func() {
+    add_settings_field('pqrc_switcher', 'Switcher Control', 'pqrc_switcher_display_callback', 'general');
+    register_setting('general', 'pqrc_switcher');
+}
+add_action('admin_init', 'pqrc_switcher_setting_field_func');
+
+/***
+ * Display output
+ */
+function pqrc_switcher_display_callback() {
+    $option = get_option('pqrc_switcher');
+    echo '<div id="toggle1"></div>';
+    echo '<input type="hidden" value="'.$option.'" name="pqrc_switcher" id="toggle_input" />';
+}
