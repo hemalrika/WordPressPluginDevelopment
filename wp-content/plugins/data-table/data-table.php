@@ -31,6 +31,17 @@ function datatable_search_by_name($item) {
 
 	return false;
 }
+function datatable_filter_sex($item) {
+    $sex = $_REQUEST['filter_s'] ?? 'all';
+    if('all' == $sex) {
+        return true;
+    } else {
+        if($sex == $item['sex']) {
+            return true;
+        }
+    }
+    return false;
+}
 function datatable_display_func() {
     include_once "dataset.php";
     // create table  using Persons_Table class
@@ -39,6 +50,9 @@ function datatable_display_func() {
     if ( isset( $_REQUEST['s'] ) && !empty($_REQUEST['s']) ) {
         $data = array_filter( $data, 'datatable_search_by_name' );
 	}
+    if(isset($_REQUEST['filter_s']) && !empty($_REQUEST['filter_s'])) {
+        $data = array_filter($data, 'datatable_filter_sex');
+    }
     /**
      * Order functionality
      */
