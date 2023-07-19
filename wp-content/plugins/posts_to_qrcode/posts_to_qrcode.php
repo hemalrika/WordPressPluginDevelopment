@@ -149,12 +149,3 @@ function pqrc_switcher_setting_field_func() {
     register_setting('general', 'pqrc_switcher');
 }
 add_action('admin_init', 'pqrc_switcher_setting_field_func');
-
-/***
- * Display output
- */
-function pqrc_switcher_display_callback() {
-    $option = get_option('pqrc_switcher');
-    echo '<div id="toggle1"></div>';
-    echo '<input type="hidden" value="'.$option.'" name="pqrc_switcher" id="toggle_input" />';
-}

@@ -28,4 +28,9 @@ function wordcount_count_words($content) {
     return $content;
 
 }
-add_filter("the_content", "wordcount_count_words");;
+add_filter("the_content", "wordcount_count_words");
+
+
+
+
+
