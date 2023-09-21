@@ -105,5 +105,23 @@ function dbdemo_admin_page() {
             echo "Name: ". $result->name. "<br/>";
             echo "Email: ". $result->email. "<br/>";
         }
-    }
-}
+    }?>
+        <form action="" method="POST">
+            <?php wp_nonce_field('dbdemo', 'nonce'); ?>
+            Name: <input type="text" name="name" id="name"><br/>
+            Email: <input type="email" name="email" id="email"><br/>
+            <?php submit_button("Add Record"); ?>
+        </form>
+        <?php
+            if(isset($_POST['submit'])) {
+                $nonce = sanitize_text_field($_POST['nonce']);
+                if(wp_verify_nonce($nonce, 'dbdemo')) {
+                    $name = sanitize_text_field($_POST['name']);
+                    $email = sanitize_text_field($_POST['email']);
+                    $wpdb->insert($table_name, ['name' => $name, 'email' => $email]);
+                } else {
+                    echo "You're not allowed";
+                }
+            }
+        ?>
+<?php }
